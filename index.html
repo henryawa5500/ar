@@ -21,25 +21,49 @@
     height: 100%;
     overflow: hidden;
     background: #000;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   body {
     position: fixed;
     inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  a-scene,
+  a-scene {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    inset: 0;
+  }
+
   canvas,
-  .a-canvas,
-  video {
+  .a-canvas {
     position: fixed !important;
     inset: 0;
     width: 100% !important;
     height: 100% !important;
   }
 
+  video {
+    display: none;
+  }
+
   .mindar-ui-overlay {
     z-index: 10;
+  }
+
+  @media (max-width: 768px) {
+    a-scene {
+      width: 100% !important;
+      height: 100% !important;
+    }
   }
 </style>
 </head>
@@ -72,17 +96,16 @@
   <a-camera position="0 0 0"></a-camera>
 
   <a-entity mindar-image-target="targetIndex: 0">
-
-  <a-plane
-    id="video-plane"
-    material="shader: flat; src: #vid; side: double"
-    width="1"
-    height="0.5625"
-    position="0 0 0"
-    rotation="0 0 0">
-  </a-plane>
-
-</a-entity>
+    <a-plane
+      id="video-plane"
+      material="shader: flat; src: #vid; side: double; transparent: true"
+      width="1"
+      height="0.5625"
+      position="0 0 0.01"
+      rotation="0 0 0"
+      geometry="primitive: plane; segmentsWidth: 32; segmentsHeight: 32">
+    </a-plane>
+  </a-entity>
 
 </a-scene>
 
@@ -97,9 +120,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const syncPlaneToVideo = () => {
     if (!video.videoWidth || !video.videoHeight) return;
     const aspect = video.videoWidth / video.videoHeight;
-    const height = 1;
-    plane.setAttribute("width", (aspect * height).toFixed(4));
-    plane.setAttribute("height", height.toFixed(4));
+    const baseHeight = 1;
+    const width = aspect * baseHeight;
+    
+    plane.setAttribute("width", width.toFixed(4));
+    plane.setAttribute("height", baseHeight.toFixed(4));
+    
+    // Ensure plane is centered
+    plane.setAttribute("position", "0 0 0.01");
+    
+    console.log(`Plane dimensions: ${width.toFixed(4)} x ${baseHeight.toFixed(4)}`);
   };
 
   const ensureVideoPlayback = () => {
@@ -149,6 +179,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (video.paused) {
       ensureVideoPlayback();
     }
+  }, 1000);
+
+  // Handle window resize
+  window.addEventListener("resize", () => {
+    syncPlaneToVideo();
+  });
+
+  // Initial positioning after scene loads
+  setTimeout(() => {
+    syncPlaneToVideo();
   }, 1000);
 
 });
