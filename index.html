@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
@@ -10,189 +11,131 @@
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #000;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
-  }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
 
-  body {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    body {
+      position: fixed;
+      inset: 0;
+    }
 
-  a-scene {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    inset: 0;
-  }
-
-  canvas,
-  .a-canvas {
-    position: fixed !important;
-    inset: 0;
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  video {
-    display: none;
-  }
-
-  .mindar-ui-overlay {
-    z-index: 10;
-  }
-
-  @media (max-width: 768px) {
-    a-scene {
+    a-scene,
+    canvas,
+    .a-canvas {
+      position: fixed !important;
+      inset: 0;
       width: 100% !important;
       height: 100% !important;
     }
-  }
-</style>
+
+    .mindar-ui-overlay {
+      z-index: 10;
+    }
+  </style>
 </head>
 
 <body>
 
-<a-scene
-  mindar-image="imageTargetSrc: targets.mind; autoStart: true; filterMinCF: 0.0001; filterBeta: 0.001; warmupTolerance: 12; missTolerance: 20; uiScanning: yes;"
-  vr-mode-ui="enabled: false"
-  device-orientation-permission-ui="enabled: false"
-  color-space="sRGB"
-  renderer="colorManagement: true; physicallyCorrectLights: false; antialias: true; alpha: true;"
-  loading-screen="enabled: false"
-  debug-ui="enabled: false"
->
+  <a-scene
+    mindar-image="imageTargetSrc: targets.mind; autoStart: true; filterMinCF: 0.0001; filterBeta: 0.001; warmupTolerance: 12; missTolerance: 20; uiScanning: yes;"
+    vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" color-space="sRGB"
+    renderer="colorManagement: true; physicallyCorrectLights: false; antialias: true; alpha: true;"
+    loading-screen="enabled: false" debug-ui="enabled: false">
 
-  <a-assets>
-    <video id="vid"
-      src="animation.mp4"
-      preload="auto"
-      autoplay
-      loop
-      muted
-      playsinline
-      webkit-playsinline
-      crossorigin="anonymous">
-    </video>
-  </a-assets>
+    <a-assets>
+      <video id="vid" src="animation.mp4" preload="auto" autoplay loop muted playsinline webkit-playsinline
+        crossorigin="anonymous">
+      </video>
+    </a-assets>
 
-  <a-camera position="0 0 0"></a-camera>
+    <a-camera position="0 0 0"></a-camera>
 
-  <a-entity mindar-image-target="targetIndex: 0">
-    <a-plane
-      id="video-plane"
-      material="shader: flat; src: #vid; side: double; transparent: true"
-      width="1"
-      height="0.5625"
-      position="0 0 0.01"
-      rotation="0 0 0"
-      geometry="primitive: plane; segmentsWidth: 32; segmentsHeight: 32">
-    </a-plane>
-  </a-entity>
+    <a-entity mindar-image-target="targetIndex: 0">
+      <a-plane id="video-plane" material="shader: flat; src: #vid; side: double" width="1"
+        height="0.5625" position="0 0 0" rotation="0 0 0">
+      </a-plane>
+    </a-entity>
 
-</a-scene>
+  </a-scene>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
 
-  const scene = document.querySelector("a-scene");
-  const video = document.querySelector("#vid");
-  const target = document.querySelector("[mindar-image-target]");
-  const plane = document.querySelector("#video-plane");
+      const scene = document.querySelector("a-scene");
+      const video = document.querySelector("#vid");
+      const target = document.querySelector("[mindar-image-target]");
+      const plane = document.querySelector("#video-plane");
 
-  const syncPlaneToVideo = () => {
-    if (!video.videoWidth || !video.videoHeight) return;
-    const aspect = video.videoWidth / video.videoHeight;
-    const baseHeight = 1;
-    const width = aspect * baseHeight;
-    
-    plane.setAttribute("width", width.toFixed(4));
-    plane.setAttribute("height", baseHeight.toFixed(4));
-    
-    // Ensure plane is centered
-    plane.setAttribute("position", "0 0 0.01");
-    
-    console.log(`Plane dimensions: ${width.toFixed(4)} x ${baseHeight.toFixed(4)}`);
-  };
+      const syncPlaneToVideo = () => {
+        if (!video.videoWidth || !video.videoHeight) return;
+        const aspect = video.videoWidth / video.videoHeight;
+        const height = 1;
+        plane.setAttribute("width", (aspect * height).toFixed(4));
+        plane.setAttribute("height", height.toFixed(4));
+      };
 
-  const ensureVideoPlayback = () => {
-    video.play().catch((err) => {
-      console.log("Video play blocked:", err);
+      const ensureVideoPlayback = () => {
+        video.play().catch((err) => {
+          console.log("Video play blocked:", err);
+        });
+      };
+
+      video.muted = true;
+      video.autoplay = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.setAttribute("playsinline", "");
+      video.setAttribute("webkit-playsinline", "");
+      video.setAttribute("autoplay", "");
+      video.setAttribute("muted", "");
+
+      scene.addEventListener("renderstart", () => {
+        console.log("Scene render started");
+        ensureVideoPlayback();
+      });
+
+      video.addEventListener("loadedmetadata", () => {
+        syncPlaneToVideo();
+        console.log("Video metadata loaded", video.videoWidth, video.videoHeight);
+      });
+
+      video.addEventListener("loadeddata", () => {
+        syncPlaneToVideo();
+        console.log("Video loaded");
+      });
+
+      video.addEventListener("error", (e) => {
+        console.log("Video error:", e);
+      });
+
+      target.addEventListener("targetFound", () => {
+        console.log("Target found");
+        ensureVideoPlayback();
+      });
+
+      target.addEventListener("targetLost", () => {
+        console.log("Target lost");
+      });
+
+      setInterval(() => {
+        if (video.paused) {
+          ensureVideoPlayback();
+        }
+      }, 1000);
+
     });
-  };
-
-  video.muted = true;
-  video.autoplay = true;
-  video.loop = true;
-  video.playsInline = true;
-  video.setAttribute("playsinline", "");
-  video.setAttribute("webkit-playsinline", "");
-  video.setAttribute("autoplay", "");
-  video.setAttribute("muted", "");
-
-  scene.addEventListener("renderstart", () => {
-    console.log("Scene render started");
-    ensureVideoPlayback();
-  });
-
-  video.addEventListener("loadedmetadata", () => {
-    syncPlaneToVideo();
-    console.log("Video metadata loaded", video.videoWidth, video.videoHeight);
-  });
-
-  video.addEventListener("loadeddata", () => {
-    syncPlaneToVideo();
-    console.log("Video loaded");
-  });
-
-  video.addEventListener("error", (e) => {
-    console.log("Video error:", e);
-  });
-
-  target.addEventListener("targetFound", () => {
-    console.log("Target found");
-    ensureVideoPlayback();
-  });
-
-  target.addEventListener("targetLost", () => {
-    console.log("Target lost");
-  });
-
-  setInterval(() => {
-    if (video.paused) {
-      ensureVideoPlayback();
-    }
-  }, 1000);
-
-  // Handle window resize
-  window.addEventListener("resize", () => {
-    syncPlaneToVideo();
-  });
-
-  // Initial positioning after scene loads
-  setTimeout(() => {
-    syncPlaneToVideo();
-  }, 1000);
-
-});
-</script>
+  </script>
 
 </body>
+
 </html>
