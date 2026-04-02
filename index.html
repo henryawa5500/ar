@@ -77,6 +77,8 @@
       const target = document.querySelector("[mindar-image-target]");
       const plane = document.querySelector("#video-plane");
 
+        let playTimeout = null;
+
       const syncPlaneToVideo = () => {
         if (!video.videoWidth || !video.videoHeight) return;
         const aspect = video.videoWidth / video.videoHeight;
@@ -120,12 +122,17 @@
 
       target.addEventListener("targetFound", () => {
         console.log("Target found");
+        video.pause();
         video.currentTime = 0;
-        ensureVideoPlayback();
+        if (playTimeout) clearTimeout(playTimeout);
+        playTimeout = setTimeout(() => {
+          ensureVideoPlayback();
+        }, 2000);
       });
 
       target.addEventListener("targetLost", () => {
         console.log("Target lost");
+        if (playTimeout) clearTimeout(playTimeout);
         video.pause();
         video.currentTime = 0;
       });
