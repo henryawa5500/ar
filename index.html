@@ -98,7 +98,6 @@
       video.setAttribute("playsinline", "");
       video.setAttribute("webkit-playsinline", "");
       video.setAttribute("autoplay", "");
-      video.setAttribute("muted", "");
 
       scene.addEventListener("renderstart", () => {
         console.log("Scene render started");
@@ -121,11 +120,14 @@
 
       target.addEventListener("targetFound", () => {
         console.log("Target found");
+        video.currentTime = 0;
         ensureVideoPlayback();
       });
 
       target.addEventListener("targetLost", () => {
         console.log("Target lost");
+        video.pause();
+        video.currentTime = 0;
       });
 
       setInterval(() => {
