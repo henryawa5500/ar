@@ -77,7 +77,7 @@
       const target = document.querySelector("[mindar-image-target]");
       const plane = document.querySelector("#video-plane");
 
-        let playTimeout = null;
+      let playTimeout = null;
 
       const syncPlaneToVideo = () => {
         if (!video.videoWidth || !video.videoHeight) return;
@@ -136,12 +136,6 @@
         video.pause();
         video.currentTime = 0;
       });
-
-      setInterval(() => {
-        if (video.paused) {
-          ensureVideoPlayback();
-        }
-      }, 1000);
 
     });
   </script>
