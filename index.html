@@ -47,6 +47,11 @@
 
 <body>
 
+  <div id="start-overlay"
+    style="position:fixed;z-index:1000;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);color:#fff;display:flex;align-items:center;justify-content:center;font-size:2em;cursor:pointer;">
+    Tap to Start
+  </div>
+
   <a-scene
     mindar-image="imageTargetSrc: targets.mind; autoStart: true; filterMinCF: 0.0001; filterBeta: 0.001; warmupTolerance: 12; missTolerance: 20; uiScanning: yes;"
     vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" color-space="sRGB"
@@ -57,7 +62,8 @@
       <video id="vid" src="animation.mp4" preload="auto" autoplay loop muted playsinline webkit-playsinline
         crossorigin="anonymous">
       </video>
-      <audio id="custom-audio" src="Mavo-Ft-Dj-Maphorisa-DJ-Tunez-and-Wizkid-MONEY-CONSTANT-(TrendyBeatz.com).mp3" preload="auto"></audio>
+      <audio id="custom-audio" src="Mavo-Ft-Dj-Maphorisa-DJ-Tunez-and-Wizkid-MONEY-CONSTANT-(TrendyBeatz.com).mp3"
+        preload="auto"></audio>
     </a-assets>
 
     <a-camera position="0 0 0"></a-camera>
@@ -78,6 +84,7 @@
       const audio = document.querySelector("#custom-audio");
       const target = document.querySelector("[mindar-image-target]");
       const plane = document.querySelector("#video-plane");
+      const overlay = document.getElementById("start-overlay");
 
       let playTimeout = null;
 
@@ -99,7 +106,7 @@
         });
       };
 
-      video.muted = false;
+      video.muted = true;
       video.autoplay = true;
       video.loop = true;
       video.playsInline = true;
@@ -109,7 +116,17 @@
 
       scene.addEventListener("renderstart", () => {
         console.log("Scene render started");
-        ensureVideoPlayback();
+        // Don't autoplay until user gesture
+
+        // Unlock audio/video on first tap
+        const unlockMedia = () => {
+          video.muted = true;
+          video.pause();
+          audio.pause();
+          overlay.style.display = "none";
+        };
+        overlay.addEventListener("click", unlockMedia);
+        overlay.addEventListener("touchstart", unlockMedia);
       });
 
       video.addEventListener("loadedmetadata", () => {
