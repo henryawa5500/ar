@@ -54,9 +54,10 @@
     loading-screen="enabled: false" debug-ui="enabled: false">
 
     <a-assets>
-      <video id="vid" src="animation.mp4" preload="auto" autoplay loop playsinline webkit-playsinline
+      <video id="vid" src="animation.mp4" preload="auto" autoplay loop muted playsinline webkit-playsinline
         crossorigin="anonymous">
       </video>
+      <audio id="custom-audio" src="Mavo-Ft-Dj-Maphorisa-DJ-Tunez-and-Wizkid-MONEY-CONSTANT-(TrendyBeatz.com).mp3" preload="auto"></audio>
     </a-assets>
 
     <a-camera position="0 0 0"></a-camera>
@@ -74,6 +75,7 @@
 
       const scene = document.querySelector("a-scene");
       const video = document.querySelector("#vid");
+      const audio = document.querySelector("#custom-audio");
       const target = document.querySelector("[mindar-image-target]");
       const plane = document.querySelector("#video-plane");
 
@@ -90,6 +92,10 @@
       const ensureVideoPlayback = () => {
         video.play().catch((err) => {
           console.log("Video play blocked:", err);
+        });
+        audio.currentTime = 0;
+        audio.play().catch((err) => {
+          console.log("Audio play blocked:", err);
         });
       };
 
@@ -135,6 +141,8 @@
         if (playTimeout) clearTimeout(playTimeout);
         video.pause();
         video.currentTime = 0;
+        audio.pause();
+        audio.currentTime = 0;
       });
 
     });
