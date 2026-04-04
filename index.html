@@ -62,8 +62,7 @@
       <video id="vid" src="animation.mp4" preload="auto" autoplay loop muted playsinline webkit-playsinline
         crossorigin="anonymous">
       </video>
-      <audio id="custom-audio" src="Mavo-Ft-Dj-Maphorisa-DJ-Tunez-and-Wizkid-MONEY-CONSTANT-(TrendyBeatz.com).mp3"
-        preload="auto"></audio>
+      <audio id="custom-audio" src="Mavo-Ft-Dj-Maphorisa-DJ-Tunez-and-Wizkid-MONEY-CONSTANT-(TrendyBeatz.com).mp3" preload="auto"></audio>
     </a-assets>
 
     <a-camera position="0 0 0"></a-camera>
@@ -121,8 +120,9 @@
         // Unlock audio/video on first tap
         const unlockMedia = () => {
           video.muted = true;
-          video.pause();
-          audio.pause();
+          // Attempt to unlock video and audio for autoplay
+          video.play().then(() => video.pause()).catch(() => { });
+          audio.play().then(() => audio.pause()).catch(() => { });
           overlay.style.display = "none";
         };
         overlay.addEventListener("click", unlockMedia);
