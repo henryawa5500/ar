@@ -59,10 +59,9 @@
     loading-screen="enabled: false" debug-ui="enabled: false">
 
     <a-assets>
-      <video id="vid" src="animation.mp4" preload="auto" autoplay loop muted playsinline webkit-playsinline
+      <video id="vid" src="animation.mp4" preload="auto" autoplay loop playsinline webkit-playsinline
         crossorigin="anonymous">
       </video>
-      <audio id="custom-audio" src="Mavo-Ft-Dj-Maphorisa-DJ-Tunez-and-Wizkid-MONEY-CONSTANT-(TrendyBeatz.com).mp3" preload="auto"></audio>
     </a-assets>
 
     <a-camera position="0 0 0"></a-camera>
@@ -80,7 +79,6 @@
 
       const scene = document.querySelector("a-scene");
       const video = document.querySelector("#vid");
-      const audio = document.querySelector("#custom-audio");
       const target = document.querySelector("[mindar-image-target]");
       const plane = document.querySelector("#video-plane");
       const overlay = document.getElementById("start-overlay");
@@ -99,13 +97,9 @@
         video.play().catch((err) => {
           console.log("Video play blocked:", err);
         });
-        audio.currentTime = 0;
-        audio.play().catch((err) => {
-          console.log("Audio play blocked:", err);
-        });
       };
 
-      video.muted = true;
+      video.muted = false;
       video.autoplay = true;
       video.loop = true;
       video.playsInline = true;
@@ -119,10 +113,9 @@
 
         // Unlock audio/video on first tap
         const unlockMedia = () => {
-          video.muted = true;
-          // Attempt to unlock video and audio for autoplay
+          video.muted = false;
+          // Attempt to unlock video for autoplay
           video.play().then(() => video.pause()).catch(() => { });
-          audio.play().then(() => audio.pause()).catch(() => { });
           overlay.style.display = "none";
         };
         overlay.addEventListener("click", unlockMedia);
@@ -158,8 +151,6 @@
         if (playTimeout) clearTimeout(playTimeout);
         video.pause();
         video.currentTime = 0;
-        audio.pause();
-        audio.currentTime = 0;
       });
 
     });
